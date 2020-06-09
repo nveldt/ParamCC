@@ -1,5 +1,9 @@
 # ParamCC
 
-Algorithms for parametric correlation clustering in hypergraphs and bipartite graphs
+Code for algorithms and experiments for
 
-Some experiments make use of [Graclus software](http://www.cs.utexas.edu/users/dml/Software/graclus.html), not included in this repo.
+"Parametric correlation clustering in hypergraphs and bipartite graphs"
+Nate Veldt, Anthony Wirth, and David F. Gleich
+KDD 2020
+
+Some experiments make use of graph and hypergraph clusteiring software not included in this repo.

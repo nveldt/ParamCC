@@ -50,6 +50,34 @@ function ExtractAllTriMat(A::SparseMatrixCSC{Float64,Int64})
     return Am
 end
 
+# Extract triangles as a hyperedge list
+function ExtractTriangle_List(A::SparseMatrixCSC{Float64,Int64})
+    n = size(A,1)
+    H1 = Vector{Int64}()
+    H2 = Vector{Int64}()
+    H3 = Vector{Int64}()
+    for i = 1:n-2
+        for j = i+1:n-1
+            Aji = A[j,i]
+            Aij = A[i,j]
+            if Aji == 0 || Aij == 0
+                continue
+            end
+
+            for k = j+1:n
+
+                if A[k,j]+A[k,i]+A[j,k]+A[i,k] == 4
+                    push!(H1,i)
+                    push!(H2,j)
+                    push!(H3,k)
+                end
+            end
+        end
+    end
+    H = [H1 H2 H3]
+    return H
+end
+
 function ExtractFanMat(A::SparseMatrixCSC{Float64,Int64})
     n = size(A,1)
     Am = zeros(n,n)
@@ -76,6 +104,35 @@ function ExtractFanMat(A::SparseMatrixCSC{Float64,Int64})
     return Am
 end
 
+
+function ExtractFanList(A::SparseMatrixCSC{Float64,Int64})
+    n = size(A,1)
+    H1 = Vector{Int64}()
+    H2 = Vector{Int64}()
+    H3 = Vector{Int64}()
+    H4 = Vector{Int64}()
+    for i = 1:n
+        for j = i+1:n
+            for k = j+1:n
+                for l = k+1:n
+                    # Yuck, quad loop.
+                    ps= [i j k l; i k j l; i l j k; j k i l; j l i k; k l i j]
+                    for w = 1:size(ps,1)
+                        a = ps[w,1]; b = ps[w,2]; c = ps[w,3]; d = ps[w,4]
+                        if A[a,c] > 0 && A[b,c] > 0 && A[a,d] > 0 && A[b,d] > 0 && A[c,a] ==0 && A[d,a] ==0 && A[c,b] ==0 && A[d,b] ==0
+                            push!(H1,a)
+                            push!(H2,b)
+                            push!(H3,c)
+                            push!(H4,d)
+                        end
+                    end
+                end
+            end
+        end
+    end
+    H = [H1 H2 H3 H4]
+    return H
+end
 
 function turntounweighted(Aorig::SparseMatrixCSC{Float64,Int64})
     A = copy(Aorig)
